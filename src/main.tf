@@ -11,4 +11,4 @@ resource "aws_sagemaker_endpoint_configuration" "main" {
 resource "aws_sagemaker_endpoint" "main" {
   name                 = "${var.md_metadata.name_prefix}-endpoint"
   endpoint_config_name = aws_sagemaker_endpoint_configuration.main.name
-} 
+}

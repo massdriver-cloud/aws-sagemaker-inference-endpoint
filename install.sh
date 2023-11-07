@@ -9,7 +9,7 @@ echo -n "Installing bundle publish workflow to $WORKFLOW_DIRECTORY/$WORKFLOW_NAM
 mkdir --parents $WORKFLOW_DIRECTORY
 wget -O $WORKFLOW_DIRECTORY/$WORKFLOW_NAME -q https://raw.githubusercontent.com/massdriver-cloud/actions/main/example_workflows/$WORKFLOW_NAME
 echo " done!"
-echo 
+echo
 echo "A GitHub workflow has been added at $WORKFLOW_DIRECTORY/$WORKFLOW_NAME".
 echo "It publishes any updates to the bundle to Massdriver on push to main."
 echo "You will need to set two secrets for the repository in GitHub:"
@@ -27,4 +27,3 @@ if [[ -f $DOCKERFILE_DIRECTORY/Dockerfile ]]; then
         echo
     fi
 fi
-

@@ -50,8 +50,18 @@ Form input parameters for configuring a bundle for deployment.
 <summary>View</summary>
 
 <!-- PARAMS:START -->
+## Properties
 
-**Params coming soon**
+- **`endpoint_config`** *(object)*
+  - **`instance_count`** *(string)*: Initial number of instances used for auto-scaling.
+  - **`instance_type`** *(string)*: The instance type. (e.g. 	ml.g5.4xlarge).
+  - **`model_name`** *(string)*: The name of the SageMaker Model in the Model Registry.
+- **`region`** *(string)*: AWS Region to provision in.
+
+  Examples:
+  ```json
+  "us-west-2"
+  ```
 
 <!-- PARAMS:END -->
 
@@ -65,8 +75,30 @@ Connections from other bundles that this bundle depends on.
 <summary>View</summary>
 
 <!-- CONNECTIONS:START -->
+## Properties
 
-**Connections coming soon**
+- **`aws_authentication`** *(object)*: . Cannot contain additional properties.
+  - **`data`** *(object)*
+    - **`arn`** *(string)*: Amazon Resource Name.
+
+      Examples:
+      ```json
+      "arn:aws:rds::ACCOUNT_NUMBER:db/prod"
+      ```
+
+      ```json
+      "arn:aws:ec2::ACCOUNT_NUMBER:vpc/vpc-foo"
+      ```
+
+    - **`external_id`** *(string)*: An external ID is a piece of data that can be passed to the AssumeRole API of the Security Token Service (STS). You can then use the external ID in the condition element in a role's trust policy, allowing the role to be assumed only when a certain value is present in the external ID.
+  - **`specs`** *(object)*
+    - **`aws`** *(object)*: .
+      - **`region`** *(string)*: AWS Region to provision in.
+
+        Examples:
+        ```json
+        "us-west-2"
+        ```
 
 <!-- CONNECTIONS:END -->
 
@@ -80,8 +112,7 @@ Resources created by this bundle that can be connected to other bundles.
 <summary>View</summary>
 
 <!-- ARTIFACTS:START -->
-
-**Artifacts coming soon**
+## Properties
 
 <!-- ARTIFACTS:END -->
 
