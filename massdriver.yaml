@@ -1,11 +1,10 @@
 schema: draft-07
-name: "aws-sagemaker-inference-endpoint"
-description: "AWS SageMaker Inference Endpoint for hosting an AI model existing in your AWS SageMaker Model Registry"
-source_url: github.com/YOUR_NAME_HERE/aws-sagemaker-inference-endpoint
-access: private
-type: "infrastructure"
+name: aws-sagemaker-inference-endpoint
+description: AWS SageMaker Inference Endpoint for hosting an AI model existing in your AWS SageMaker Model Registry
+source_url: github.com/massdriver-cloud/aws-sagemaker-inference-endpoint
+access: public
+type: infrastructure
 
-# schema-params.json
 params:
   required:
     - region
@@ -35,8 +34,6 @@ params:
           description: "Initial number of instances used for auto-scaling."
           type: string
 
-
-# schema-connections.json
 connections:
   required:
   - aws_authentication
@@ -44,11 +41,9 @@ connections:
     aws_authentication:
       $ref: massdriver/aws-iam-role
 
-# schema-artifacts.json
 artifacts:
   properties: {}
 
-# schema-ui.json
 ui:
   ui:order:
     - region
