@@ -1,0 +1,24 @@
+# aws-sagemaker-inference-endpoint
+Amazon SageMaker Inference Endpoint is a fully managed service by AWS that allows developers to deploy machine learning models for making predictions in real-time. This bundle will take a model from the SageMaker model registry, create an endpoint configuration, and then create an endpoint.
+
+## Use Cases
+### Real-time Predictions
+SageMaker Inference Endpoints make it easy to generate real-time predictions from your machine learning models.
+
+### Scalable Model Deployment
+You can deploy your models with auto scaling capabilities to handle varying loads of inference requests.
+
+### Integrated with your Applications
+SageMaker Inference Endpoints are exposed through a secure REST API, which can be easily integrated into your applications.
+
+## Design
+This bundle accepts a SageMaker Model name as input and creates an Inference Endpoint. The model must be in the SageMaker Model Registry before it can be used to create an endpoint. The endpoint can be deployed to a variety of instance types, including CPU and GPU instances and you can set it's initial instance count. The endpoint must be created in the same region as the model.
+
+### SageMaker Model
+A SageMaker Model is a representation of a machine learning model. It includes the S3 path where the model artifacts are stored and the Docker image that was used for training.
+
+### Endpoint Configuration
+An Endpoint Configuration specifies the ML compute instances that will be used for the inference endpoint.
+
+### Inference Endpoint
+The Inference Endpoint is a hosted model that can be accessed through a REST API to get real-time predictions.

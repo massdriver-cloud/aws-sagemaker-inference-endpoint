@@ -1,0 +1,58 @@
+schema: draft-07
+name: "aws-sagemaker-inference-endpoint"
+description: "AWS SageMaker Inference Endpoint for hosting an AI model existing in your AWS SageMaker Model Registry"
+source_url: github.com/YOUR_NAME_HERE/aws-sagemaker-inference-endpoint
+access: private
+type: "infrastructure"
+
+# schema-params.json
+params:
+  required:
+    - region
+    - endpoint_config
+  properties:
+    region:
+      $ref: https://raw.githubusercontent.com/massdriver-cloud/artifact-definitions/main/definitions/types/aws-region.json
+      $md.immutable: true
+    endpoint_config:
+      title: Endpoint Configuration
+      type: object
+      required:
+        - model_name
+        - instance_type
+        - instance_count
+      properties:
+        model_name:
+          title: Model Name
+          description: "The name of the SageMaker Model in the Model Registry."
+          type: string
+        instance_type:
+          title: Instance Type
+          description: "The instance type. (e.g. 	ml.g5.4xlarge)"
+          type: string
+        instance_count:
+          title: Initial Instance Count
+          description: "Initial number of instances used for auto-scaling."
+          type: string
+
+
+# schema-connections.json
+connections:
+  required:
+  - aws_authentication
+  properties:
+    aws_authentication:
+      $ref: massdriver/aws-iam-role
+
+# schema-artifacts.json
+artifacts:
+  properties: {}
+
+# schema-ui.json
+ui:
+  ui:order:
+    - region
+    - "*"
+  region:
+      ui:field: supportedCloudLocationsDropdown
+      cloudService: aws
