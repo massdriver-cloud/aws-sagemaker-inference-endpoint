@@ -19,7 +19,7 @@ resource "aws_sagemaker_model" "main" {
 
 resource "aws_sagemaker_endpoint_configuration" "main" {
   name = "${var.md_metadata.name_prefix}-endpoint-config"
-
+  # kms_key_arn  = module.kms.key_arn  
   production_variants {
     model_name             = aws_sagemaker_model.main.name
     instance_type          = var.endpoint_config.instance_type
