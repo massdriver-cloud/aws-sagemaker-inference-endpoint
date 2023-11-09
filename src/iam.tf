@@ -37,6 +37,21 @@ data "aws_iam_policy_document" "sagemaker_endpoint" {
     ]
   }
   statement {
+    sid    = "KMSEncryption"
+    effect = "Allow"
+    resources = [
+      module.kms.key_arn
+    ]
+    actions = [
+      "kms:Decrypt",
+      "kms:Encrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+      "kms:CreateGrant"
+    ]
+  }
+  statement {
     sid       = "ECRAccess"
     effect    = "Allow"
     resources = ["*"]

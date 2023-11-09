@@ -54,8 +54,7 @@ connections:
     vpc:
       $ref: massdriver/aws-vpc
 
-artifacts:
-  properties: {}
+artifacts: {}
 
 ui:
   ui:order:

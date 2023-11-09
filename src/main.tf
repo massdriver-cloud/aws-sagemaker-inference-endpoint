@@ -8,8 +8,8 @@ resource "aws_sagemaker_model" "main" {
   execution_role_arn = aws_iam_role.sagemaker_endpoint.arn
 
   primary_container { 
-    image     = var.endpoint_config.ecr_image 
-    model_data_url = var.endpoint_config.model_data
+    image     = var.endpoint_config.primary_container.ecr_image 
+    model_data_url = var.endpoint_config.primary_container.model_data
   }
   vpc_config {
     security_group_ids = [aws_security_group.sagemaker_endpoint.id]
