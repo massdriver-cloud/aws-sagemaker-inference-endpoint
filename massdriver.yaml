@@ -1,30 +1,37 @@
 schema: draft-07
 name: aws-sagemaker-inference-endpoint
-description: AWS SageMaker Inference Endpoint for hosting an AI model existing in your AWS SageMaker Model Registry
+description: AWS SageMaker Inference Endpoint for hosting an AI model
 source_url: github.com/massdriver-cloud/aws-sagemaker-inference-endpoint
 access: public
 type: infrastructure
 
 params:
   required:
-    - region
     - endpoint_config
   properties:
-    region:
-      $ref: https://raw.githubusercontent.com/massdriver-cloud/artifact-definitions/main/definitions/types/aws-region.json
-      $md.immutable: true
     endpoint_config:
       title: Endpoint Configuration
       type: object
       required:
-        - model_name
+        - primary_container
         - instance_type
         - instance_count
       properties:
-        model_name:
-          title: Model Name
-          description: "The name of the SageMaker Model in the Model Registry."
-          type: string
+        primary_container:
+          title: Primary Container
+          type: object
+          required:
+            - model_data
+            - ecr_image
+          properties:
+            model_data:
+              title: Model Data S3 URI
+              description: "The S3 URI of the model data. (e.g. s3://bucket-name/model.tar.gz)"
+              type: string
+            ecr_image:
+              title: ECR Image URI
+              description: "The ECR Image URI. (e.g. 	763104351884.dkr.ecr.us-east-1.amazonaws.com/pytorch-inference:2.1.0-gpu-py310-cu118-ubuntu20.04-ec2)"
+              type: string
         instance_type:
           title: Instance Type
           description: "The instance type. (e.g. 	ml.g5.4xlarge)"
@@ -37,17 +44,27 @@ params:
 connections:
   required:
   - aws_authentication
+  - s3_model_bucket
+  - vpc
   properties:
     aws_authentication:
       $ref: massdriver/aws-iam-role
+    s3_model_bucket:
+      $ref: massdriver/aws-s3-bucket
+    vpc:
+      $ref: massdriver/aws-vpc
 
 artifacts:
   properties: {}
 
 ui:
   ui:order:
-    - region
+    - primary_container
+    - instance_type
+    - instance_count
     - "*"
-  region:
-      ui:field: supportedCloudLocationsDropdown
-      cloudService: aws
+    primary_container:
+      ui:order:
+        - model_data
+        - ecr_image
+        - "*"
