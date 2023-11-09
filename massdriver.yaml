@@ -63,8 +63,8 @@ ui:
     - instance_type
     - instance_count
     - "*"
-    primary_container:
-      ui:order:
-        - model_data
-        - ecr_image
-        - "*"
+  primary_container:
+    ui:order:
+      - model_data
+      - ecr_image
+      - "*"
