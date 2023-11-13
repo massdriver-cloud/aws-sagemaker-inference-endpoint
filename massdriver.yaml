@@ -7,8 +7,12 @@ type: infrastructure
 
 params:
   required:
+    - region
     - endpoint_config
   properties:
+    region: 
+      $ref: https://raw.githubusercontent.com/massdriver-cloud/artifact-definitions/main/definitions/types/aws-region.json
+      $md.immutable: true
     endpoint_config:
       title: Endpoint Configuration
       type: object
@@ -28,6 +32,9 @@ params:
               title: Model Data S3 URI
               description: "The S3 URI of the model data. (e.g. s3://bucket-name/model.tar.gz)"
               type: string
+              pattern: ^s3:\/\/.+\.tar\.gz$
+              message:
+                pattern: Must be a valid S3 URI ending in .tar.gz
             ecr_image:
               title: ECR Image URI
               description: "The ECR Image URI. (e.g. 	763104351884.dkr.ecr.us-east-1.amazonaws.com/pytorch-inference:2.1.0-gpu-py310-cu118-ubuntu20.04-ec2)"
@@ -39,29 +46,31 @@ params:
         instance_count:
           title: Initial Instance Count
           description: "Initial number of instances used for auto-scaling."
-          type: string
+          type: integer
+          minimum: 1
 
 connections:
   required:
   - aws_authentication
   - s3_model_bucket
-  - vpc
   properties:
     aws_authentication:
       $ref: massdriver/aws-iam-role
     s3_model_bucket:
       $ref: massdriver/aws-s3-bucket
-    vpc:
-      $ref: massdriver/aws-vpc
 
 artifacts: {}
 
 ui:
   ui:order:
+    - region
     - primary_container
     - instance_type
     - instance_count
     - "*"
+  region:
+    ui:field: supportedCloudLocationsDropdown
+    cloudService: aws
   primary_container:
     ui:order:
       - model_data
