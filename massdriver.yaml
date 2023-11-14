@@ -7,12 +7,8 @@ type: infrastructure
 
 params:
   required:
-    - region
     - endpoint_config
   properties:
-    region: 
-      $ref: https://raw.githubusercontent.com/massdriver-cloud/artifact-definitions/main/definitions/types/aws-region.json
-      $md.immutable: true
     endpoint_config:
       title: Endpoint Configuration
       type: object
@@ -100,24 +96,23 @@ connections:
   required:
   - aws_authentication
   - s3_model_bucket
+  - vpc
   properties:
     aws_authentication:
       $ref: massdriver/aws-iam-role
     s3_model_bucket:
       $ref: massdriver/aws-s3-bucket
+    vpc:
+      $ref: massdriver/aws-vpc
 
 artifacts: {}
 
 ui:
   ui:order:
-    - region
     - primary_container
     - instance_type
     - instance_count
     - "*"
-  region:
-    ui:field: supportedCloudLocationsDropdown
-    cloudService: aws
   primary_container:
     ui:order:
       - model_data

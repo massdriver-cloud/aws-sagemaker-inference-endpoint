@@ -1,7 +1,7 @@
-# locals {
-#   private_subnet_ids = [for subnet in var.vpc.data.infrastructure.private_subnets : element(split("/", subnet["arn"]), 1)]
-#   vpc_id             = element(split("/", var.vpc.data.infrastructure.arn), 1)
-# }
+locals {
+  private_subnet_ids = [for subnet in var.vpc.data.infrastructure.private_subnets : element(split("/", subnet["arn"]), 1)]
+  vpc_id             = element(split("/", var.vpc.data.infrastructure.arn), 1)
+}
 
 resource "aws_sagemaker_model" "main" {
   name               = "${var.md_metadata.name_prefix}-model"
@@ -11,6 +11,14 @@ resource "aws_sagemaker_model" "main" {
     image     = var.endpoint_config.primary_container.ecr_image 
     model_data_url = var.endpoint_config.primary_container.model_data
   }
+  vpc_config {
+    security_group_ids = [aws_security_group.sagemaker_endpoint.id]
+    subnets            = local.private_subnet_ids
+  } 
+  depends_on = [
+    aws_iam_role.sagemaker_endpoint,
+    aws_security_group.sagemaker_endpoint
+  ]
 }
 
 resource "aws_sagemaker_endpoint_configuration" "main" {
@@ -25,4 +33,8 @@ resource "aws_sagemaker_endpoint_configuration" "main" {
 resource "aws_sagemaker_endpoint" "main" {
   name                 = "${var.md_metadata.name_prefix}-endpoint"
   endpoint_config_name = aws_sagemaker_endpoint_configuration.main.name
+  depends_on = [
+    aws_sagemaker_endpoint_configuration.main,
+    aws_sagemaker_model.main
+  ]
 }

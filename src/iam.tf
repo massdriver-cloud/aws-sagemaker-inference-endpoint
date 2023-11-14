@@ -33,8 +33,8 @@ data "aws_iam_policy_document" "sagemaker_endpoint" {
       "s3:ListBucket",
     ]
     resources = [
-      "arn:aws:s3:::jumpstart-cache-prod-${var.region}",
-       "arn:aws:s3:::jumpstart-cache-prod-${var.region}/*"
+      "arn:aws:s3:::jumpstart-cache-prod-${var.vpc.specs.aws.region}",
+       "arn:aws:s3:::jumpstart-cache-prod-${var.vpc.specs.aws.region}/*"
     ]
   }
   statement {
@@ -81,7 +81,7 @@ data "aws_iam_policy_document" "sagemaker_endpoint" {
       "sagemaker:CreateEndpoint",
       "sagemaker:DeleteEndpoint"
     ]
-    resources = ["arn:aws:sagemaker:${var.region}:${data.aws_caller_identity.current.account_id}:endpoint/*"]
+    resources = ["arn:aws:sagemaker:${var.vpc.specs.aws.region}:${data.aws_caller_identity.current.account_id}:endpoint/*"]
   }
 }
 
