@@ -18,7 +18,7 @@ data "aws_iam_policy_document" "sagemaker_endpoint" {
     sid       = "PassRole"
     effect    = "Allow"
     actions   = ["iam:PassRole"]
-    resources = ["*"]
+    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*"]
     condition {
       test     = "StringEquals"
       variable = "iam:PassedToService"
@@ -80,7 +80,7 @@ data "aws_iam_policy_document" "sagemaker_endpoint" {
   statement {
     sid       = "EC2Access"
     effect    = "Allow"
-    resources = ["*"]
+    resources = ["arn:aws:ec2:${var.vpc.specs.aws.region}:${data.aws_caller_identity.current.account_id}:*/*"]
     actions = [
       "ec2:CreateNetworkInterface",
       "ec2:DescribeNetworkInterfaces",
