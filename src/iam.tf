@@ -26,6 +26,27 @@ data "aws_iam_policy_document" "sagemaker_endpoint" {
     }
   }
   statement {
+    sid    = "CloudwatchLogsAccess"
+    effect = "Allow"
+    resources = [
+      "arn:aws:logs:${var.vpc.specs.aws.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/sagemaker/**",
+    ]
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:CreateLogGroup",
+      "logs:DescribeLogStreams"
+    ]
+  }
+  statement {
+    sid       = "CloudwatchMetricsAccess"
+    effect    = "Allow"
+    resources = ["arn:aws:logs:${var.vpc.specs.aws.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/sagemaker/*"]
+    actions = [
+      "cloudwatch:PutMetricData"
+    ]
+  }
+  statement {
     sid    = "S3ReadAccess"
     effect = "Allow"
     actions = [
@@ -34,7 +55,7 @@ data "aws_iam_policy_document" "sagemaker_endpoint" {
     ]
     resources = [
       "arn:aws:s3:::jumpstart-cache-prod-${var.vpc.specs.aws.region}",
-       "arn:aws:s3:::jumpstart-cache-prod-${var.vpc.specs.aws.region}/*"
+      "arn:aws:s3:::jumpstart-cache-prod-${var.vpc.specs.aws.region}/*"
     ]
   }
   statement {
