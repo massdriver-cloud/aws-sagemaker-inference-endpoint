@@ -33,8 +33,33 @@ resource "aws_sagemaker_endpoint_configuration" "main" {
 resource "aws_sagemaker_endpoint" "main" {
   name                 = "${var.md_metadata.name_prefix}-endpoint"
   endpoint_config_name = aws_sagemaker_endpoint_configuration.main.name
-  depends_on = [
-    aws_sagemaker_endpoint_configuration.main,
-    aws_sagemaker_model.main
-  ]
+  # Workaround to prevent orphaned ENIs from being created by SageMaker. https://github.com/hashicorp/terraform-provider-aws/issues/34397
+  provisioner "local-exec" {
+    command = <<EOT
+      set -e
+      TEMP_ROLE=$(aws sts assume-role --role-arn "${var.aws_authentication.data.arn}" --role-session-name "TerraformENIModify" --external-id "${var.aws_authentication.data.external_id}" --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text)
+      AWS_ACCESS_KEY_ID=$(echo $TEMP_ROLE | cut -f1 -d' ')
+      AWS_SECRET_ACCESS_KEY=$(echo $TEMP_ROLE | cut -f2 -d' ')
+      AWS_SESSION_TOKEN=$(echo $TEMP_ROLE | cut -f3 -d' ')
+      export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
+      export AWS_DEFAULT_REGION="${var.vpc.specs.aws.region}"
+      aws s3 ls
+      while true; do
+          ENI_ID=$(aws ec2 describe-network-interfaces --filters "Name=group-id,Values=${aws_security_group.sagemaker_endpoint.id}" --query 'NetworkInterfaces[0].NetworkInterfaceId' --output text)
+          echo "ENI ID: $ENI_ID"
+          if [ "$ENI_ID" != "None" ]; then
+              ATTACHMENT_ID=$(aws ec2 describe-network-interfaces --network-interface-ids $ENI_ID --query 'NetworkInterfaces[0].Attachment.AttachmentId' --output text)
+              echo "ENI Attachment ID: $ATTACHMENT_ID"
+              if [ "$ATTACHMENT_ID" != "None" ]; then
+                  break
+              fi
+          fi
+          echo "Waiting for ENI and its attachment to be ready..."
+          sleep 10
+      done
+      echo "ENI and its attachment are ready"
+      aws ec2 modify-network-interface-attribute --network-interface-id $ENI_ID --attachment AttachmentId=$ATTACHMENT_ID,DeleteOnTermination=true
+
+    EOT
+  }
 }
