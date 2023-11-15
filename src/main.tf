@@ -43,7 +43,7 @@ resource "aws_sagemaker_endpoint" "main" {
       AWS_SESSION_TOKEN=$(echo $TEMP_ROLE | cut -f3 -d' ')
       export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
       export AWS_DEFAULT_REGION="${var.vpc.specs.aws.region}"
-      aws s3 ls
+
       while true; do
           ENI_ID=$(aws ec2 describe-network-interfaces --filters "Name=group-id,Values=${aws_security_group.sagemaker_endpoint.id}" --query 'NetworkInterfaces[0].NetworkInterfaceId' --output text)
           echo "ENI ID: $ENI_ID"
@@ -57,6 +57,7 @@ resource "aws_sagemaker_endpoint" "main" {
           echo "Waiting for ENI and its attachment to be ready..."
           sleep 10
       done
+      
       echo "ENI and its attachment are ready"
       aws ec2 modify-network-interface-attribute --network-interface-id $ENI_ID --attachment AttachmentId=$ATTACHMENT_ID,DeleteOnTermination=true
 
