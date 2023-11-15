@@ -7,14 +7,14 @@ resource "aws_sagemaker_model" "main" {
   name               = "${var.md_metadata.name_prefix}-model"
   execution_role_arn = aws_iam_role.sagemaker_endpoint.arn
 
-  primary_container { 
-    image     = var.endpoint_config.primary_container.ecr_image 
+  primary_container {
+    image          = var.endpoint_config.primary_container.ecr_image
     model_data_url = var.endpoint_config.primary_container.model_data
   }
   vpc_config {
     security_group_ids = [aws_security_group.sagemaker_endpoint.id]
     subnets            = local.private_subnet_ids
-  } 
+  }
   depends_on = [
     aws_iam_role.sagemaker_endpoint,
     aws_security_group.sagemaker_endpoint
@@ -57,7 +57,7 @@ resource "aws_sagemaker_endpoint" "main" {
           echo "Waiting for ENI and its attachment to be ready..."
           sleep 10
       done
-      
+
       echo "ENI and its attachment are ready"
       aws ec2 modify-network-interface-attribute --network-interface-id $ENI_ID --attachment AttachmentId=$ATTACHMENT_ID,DeleteOnTermination=true
 

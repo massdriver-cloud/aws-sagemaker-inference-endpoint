@@ -35,6 +35,9 @@ params:
               title: ECR Image URI
               description: "The ECR Image URI. (e.g. 	763104351884.dkr.ecr.us-east-1.amazonaws.com/pytorch-inference:2.1.0-gpu-py310-cu118-ubuntu20.04-ec2)"
               type: string
+              pattern: ^\d+\.dkr\.ecr\.[a-z0-9-]+\.amazonaws\.com(\.cn)?\/[a-z0-9-]+:[a-z0-9-.]+$
+              message:
+                pattern: Must be a valid ECR Image URI
         instance_type:
           title: SageMaker Instance Type
           description: Instance type to use for the SageMaker endpoint

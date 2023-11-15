@@ -11,7 +11,7 @@ resource "aws_security_group" "sagemaker_endpoint" {
 }
 
 resource "aws_security_group_rule" "sagemaker_egress_all" {
-  description = "Allow all egress"
+  description       = "Allow all egress"
   type              = "egress"
   from_port         = 0
   to_port           = 0
