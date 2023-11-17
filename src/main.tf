@@ -43,24 +43,11 @@ resource "aws_sagemaker_endpoint" "main" {
       AWS_SESSION_TOKEN=$(echo $TEMP_ROLE | cut -f3 -d' ')
       export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
       export AWS_DEFAULT_REGION="${var.vpc.specs.aws.region}"
+      
+      ENI_ID=$(aws ec2 describe-network-interfaces --region $AWS_DEFAULT_REGION --filters "Name=group-id,Values=${aws_security_group.sagemaker_endpoint.id}" --query 'NetworkInterfaces[0].NetworkInterfaceId' --output text)
+      ATTACHMENT_ID=$(aws ec2 describe-network-interfaces --region $AWS_DEFAULT_REGION --filters "Name=group-id,Values=${aws_security_group.sagemaker_endpoint.id}" --query 'NetworkInterfaces[0].Attachment.AttachmentId' --output text)
 
-      while true; do
-          ENI_ID=$(aws ec2 describe-network-interfaces --filters "Name=group-id,Values=${aws_security_group.sagemaker_endpoint.id}" --query 'NetworkInterfaces[0].NetworkInterfaceId' --output text)
-          echo "ENI ID: $ENI_ID"
-          if [ "$ENI_ID" != "None" ]; then
-              ATTACHMENT_ID=$(aws ec2 describe-network-interfaces --network-interface-ids $ENI_ID --query 'NetworkInterfaces[0].Attachment.AttachmentId' --output text)
-              echo "ENI Attachment ID: $ATTACHMENT_ID"
-              if [ "$ATTACHMENT_ID" != "None" ]; then
-                  break
-              fi
-          fi
-          echo "Waiting for ENI and its attachment to be ready..."
-          sleep 10
-      done
-
-      echo "ENI and its attachment are ready"
-      aws ec2 modify-network-interface-attribute --network-interface-id $ENI_ID --attachment AttachmentId=$ATTACHMENT_ID,DeleteOnTermination=true
-
+      aws ec2 modify-network-interface-attribute --region $AWS_DEFAULT_REGION --network-interface-id $ENI_ID --attachment AttachmentId=$ATTACHMENT_ID,DeleteOnTermination=true
     EOT
   }
 }

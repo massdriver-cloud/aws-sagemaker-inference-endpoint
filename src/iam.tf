@@ -30,6 +30,7 @@ data "aws_iam_policy_document" "sagemaker_endpoint" {
     effect = "Allow"
     resources = [
       "arn:aws:logs:${var.vpc.specs.aws.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/sagemaker/**",
+      "*"
     ]
     actions = [
       "logs:CreateLogStream",
@@ -41,7 +42,8 @@ data "aws_iam_policy_document" "sagemaker_endpoint" {
   statement {
     sid       = "CloudwatchMetricsAccess"
     effect    = "Allow"
-    resources = ["arn:aws:logs:${var.vpc.specs.aws.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/sagemaker/*"]
+    resources = ["arn:aws:logs:${var.vpc.specs.aws.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/sagemaker/*",
+                "*"]
     actions = [
       "cloudwatch:PutMetricData"
     ]
@@ -80,7 +82,7 @@ data "aws_iam_policy_document" "sagemaker_endpoint" {
   statement {
     sid       = "EC2Access"
     effect    = "Allow"
-    resources = ["arn:aws:ec2:${var.vpc.specs.aws.region}:${data.aws_caller_identity.current.account_id}:*/*"]
+    resources = ["arn:aws:ec2:${var.vpc.specs.aws.region}:${data.aws_caller_identity.current.account_id}:*/*", "*"]
     actions = [
       "ec2:CreateNetworkInterface",
       "ec2:DescribeNetworkInterfaces",
