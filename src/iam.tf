@@ -40,10 +40,10 @@ data "aws_iam_policy_document" "sagemaker_endpoint" {
     ]
   }
   statement {
-    sid       = "CloudwatchMetricsAccess"
-    effect    = "Allow"
+    sid    = "CloudwatchMetricsAccess"
+    effect = "Allow"
     resources = ["arn:aws:logs:${var.vpc.specs.aws.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/sagemaker/*",
-                "*"]
+    "*"]
     actions = [
       "cloudwatch:PutMetricData"
     ]
