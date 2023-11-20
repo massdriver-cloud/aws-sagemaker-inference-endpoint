@@ -127,3 +127,21 @@ resource "aws_iam_role_policy_attachment" "attach_s3_write_policy" {
   role       = aws_iam_role.sagemaker_endpoint.name
   policy_arn = var.s3_model_bucket.data.security.iam.write.policy_arn
 }
+
+
+resource "aws_iam_policy" "invoke_sagemaker_endpoint" {
+  name        = "${var.md_metadata.name_prefix}-invoke-sagemaker-endpoint"
+  path        = "/"
+  description = "Allow apps to invoke SageMaker endpoint"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = "sagemaker:InvokeEndpoint",
+        Resource = "${aws_sagemaker_endpoint.main.arn}"
+      }
+    ]
+  })
+}

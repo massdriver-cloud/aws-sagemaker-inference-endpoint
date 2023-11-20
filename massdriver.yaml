@@ -8,6 +8,7 @@ type: infrastructure
 params:
   required:
     - endpoint_config
+    - monitoring
   properties:
     endpoint_config:
       title: Endpoint Configuration
@@ -21,16 +22,8 @@ params:
           title: Primary Container
           type: object
           required:
-            - model_data
             - ecr_image
           properties:
-            model_data:
-              title: Model Data S3 URI
-              description: "The S3 URI of the model data. (e.g. s3://bucket-name/model.tar.gz)"
-              type: string
-              pattern: ^s3:\/\/.+\.tar\.gz$
-              message:
-                pattern: Must be a valid S3 URI ending in .tar.gz
             ecr_image:
               title: ECR Image URI
               description: "The ECR Image URI. (e.g. 	763104351884.dkr.ecr.us-east-1.amazonaws.com/pytorch-inference:2.1.0-gpu-py310-cu118-ubuntu20.04-ec2)"
@@ -38,6 +31,36 @@ params:
               pattern: ^\d+\.dkr\.ecr\.[a-z0-9-]+\.amazonaws\.com(\.cn)?\/[a-z0-9-]+:[a-z0-9-.]+$
               message:
                 pattern: Must be a valid ECR Image URI
+            model_data_config:
+              type: object
+              title: Model Data Configuration
+              description: Configuration to optionally include model data
+              required:
+                - enabled
+              properties:
+                enabled:
+                  type: boolean
+                  title: Include Model Data
+                  description: Enabling this option will allow you to include model data for the SageMaker model.
+                  default: true
+              dependencies:
+                  enabled:
+                    oneOf:
+                      - properties:
+                          enabled:
+                            const: true
+                          model_data:
+                            title: Model Data S3 URI
+                            type: string
+                            description: "The S3 URI of the model data. (e.g., s3://bucket-name/model.tar.gz)"
+                            pattern: ^s3:\/\/.+\.tar\.gz$
+                            message:
+                              pattern: Must be a valid S3 URI ending in .tar.gz
+                        required:
+                          - model_data
+                      - properties:
+                          enabled:
+                            const: false
         instance_type:
           title: SageMaker Instance Type
           description: Instance type to use for the SageMaker endpoint
@@ -94,7 +117,30 @@ params:
           description: "Initial number of instances used for auto-scaling."
           type: integer
           minimum: 1
-
+    monitoring:
+      title: Monitoring
+      type: object
+      properties:
+        endpoint_log_retention:
+          type: integer
+          default: 7
+          enum: [7, 30, 365]
+    environment_variables:
+        title: Environment Variables
+        type: array
+        items:
+          type: object
+          required:
+            - name
+            - value
+          properties:
+            name:
+              title: Variable Name
+              type: string
+            value:
+              title: Variable Value
+              type: string
+        description: "Optional: List of environment variables as key-value pairs."
 connections:
   required:
   - aws_authentication
@@ -108,7 +154,12 @@ connections:
     vpc:
       $ref: massdriver/aws-vpc
 
-artifacts: {}
+artifacts:
+  required:
+    - aws-sagemaker-endpoint
+  properties:
+    aws-sagemaker-endpoint:
+      $ref: massdriver/aws-sagemaker-endpoint
 
 ui:
   ui:order:
@@ -118,6 +169,6 @@ ui:
     - "*"
   primary_container:
     ui:order:
-      - model_data
       - ecr_image
+      - model_data_config
       - "*"

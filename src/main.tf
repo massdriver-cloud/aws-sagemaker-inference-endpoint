@@ -9,7 +9,8 @@ resource "aws_sagemaker_model" "main" {
 
   primary_container {
     image          = var.endpoint_config.primary_container.ecr_image
-    model_data_url = var.endpoint_config.primary_container.model_data
+    model_data_url = var.endpoint_config.primary_container.model_data_config.enabled ? lookup(var.endpoint_config.primary_container.model_data_config, "model_data", null) : null
+    environment    = { for env in var.environment_variables : env.name => env.value }
   }
   vpc_config {
     security_group_ids = [aws_security_group.sagemaker_endpoint.id]
@@ -33,6 +34,9 @@ resource "aws_sagemaker_endpoint_configuration" "main" {
 resource "aws_sagemaker_endpoint" "main" {
   name                 = "${var.md_metadata.name_prefix}-endpoint"
   endpoint_config_name = aws_sagemaker_endpoint_configuration.main.name
+  depends_on = [
+    aws_cloudwatch_log_group.endpoint_log_group
+  ]
   # Workaround to prevent orphaned ENIs from being created by SageMaker. https://github.com/hashicorp/terraform-provider-aws/issues/34397
   provisioner "local-exec" {
     command = <<EOT
