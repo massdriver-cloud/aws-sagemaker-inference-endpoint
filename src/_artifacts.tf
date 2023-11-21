@@ -10,7 +10,7 @@ resource "massdriver_artifact" "aws-sagemaker-endpoint" {
         }
         security = {
           iam = {
-            publish = {
+            invoke = {
               policy_arn = aws_iam_policy.invoke_sagemaker_endpoint.arn
             }
           }
