@@ -1,11 +1,22 @@
 schema: draft-07
-name: aws-sagemaker-inference-endpoint
+name: aws-sagemaker-inference-endpoint-test
 description: AWS SageMaker Inference Endpoint for hosting an AI model
 source_url: github.com/massdriver-cloud/aws-sagemaker-inference-endpoint
-access: public
+access: private
 type: infrastructure
 
 params:
+  examples:
+    - __name: Development
+      endpoint_config:
+          instance_count: 1
+      monitoring:
+          endpoint_log_retention: 7
+    - __name: Production
+      endpoint_config:
+          instance_count: 2
+      monitoring:
+          endpoint_log_retention: 365
   required:
     - endpoint_config
     - monitoring

@@ -89,6 +89,32 @@ Form input parameters for configuring a bundle for deployment.
     - **`value`** *(string)*
 - **`monitoring`** *(object)*
   - **`endpoint_log_retention`** *(integer)*: Must be one of: `[7, 30, 365]`. Default: `7`.
+## Examples
+
+  ```json
+  {
+      "__name": "Development",
+      "endpoint_config": {
+          "instance_count": 1
+      },
+      "monitoring": {
+          "endpoint_log_retention": 7
+      }
+  }
+  ```
+
+  ```json
+  {
+      "__name": "Production",
+      "endpoint_config": {
+          "instance_count": 2
+      },
+      "monitoring": {
+          "endpoint_log_retention": 365
+      }
+  }
+  ```
+
 <!-- PARAMS:END -->
 
 </details>

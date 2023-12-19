@@ -6,7 +6,8 @@ resource "massdriver_artifact" "aws-sagemaker-endpoint" {
     {
       data = {
         infrastructure = {
-          arn = aws_sagemaker_endpoint.main.arn
+          arn           = aws_sagemaker_endpoint.main.arn
+          endpoint_name = aws_sagemaker_endpoint.main.name
         }
         security = {
           iam = {
