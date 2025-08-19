@@ -1,34 +1,33 @@
 schema: draft-07
 name: aws-sagemaker-inference-endpoint
+version: 1.0.0
 description: AWS SageMaker Inference Endpoint for hosting an AI model
-source_url: github.com/massdriver-cloud/aws-sagemaker-inference-endpoint
-access: public
-type: infrastructure
-
+source_url: https://github.com/massdriver-cloud/aws-sagemaker-inference-endpoint
+type: application
 params:
   required:
-    - endpoint_config
-    - monitoring
+  - endpoint_config
+  - monitoring
   properties:
     endpoint_config:
       title: Endpoint Configuration
       type: object
       required:
-        - primary_container
-        - instance_type
-        - instance_count
+      - primary_container
+      - instance_type
+      - instance_count
       properties:
         primary_container:
           title: Primary Container
           type: object
           required:
-            - ecr_image
+          - ecr_image
           properties:
             ecr_image:
               title: ECR Image URI
-              description: "The ECR Image URI. (e.g. 	763104351884.dkr.ecr.us-east-1.amazonaws.com/pytorch-inference:2.1.0-gpu-py310-cu118-ubuntu20.04-ec2)"
+              description: "The ECR Image URI. (e.g. \t763104351884.dkr.ecr.us-east-1.amazonaws.com/pytorch-inference:2.1.0-gpu-py310-cu118-ubuntu20.04-ec2)"
               type: string
-              pattern: ^\d+\.dkr\.ecr\.[a-z0-9-]+\.amazonaws\.com(\.cn)?\/[a-z0-9-]+:[a-z0-9-.]+$
+              pattern: "^\\d+\\.dkr\\.ecr\\.[a-z0-9-]+\\.amazonaws\\.com(\\.cn)?\\/[a-z0-9-]+:[a-z0-9-.]+$"
               message:
                 pattern: Must be a valid ECR Image URI
             model_data_config:
@@ -36,7 +35,7 @@ params:
               title: Model Data Configuration
               description: Configuration to optionally include model data
               required:
-                - enabled
+              - enabled
               properties:
                 enabled:
                   type: boolean
@@ -44,77 +43,77 @@ params:
                   description: Enabling this option will allow you to include model data for the SageMaker model.
                   default: true
               dependencies:
-                  enabled:
-                    oneOf:
-                      - properties:
-                          enabled:
-                            const: true
-                          model_data:
-                            title: Model Data S3 URI
-                            type: string
-                            description: "The S3 URI of the model data. (e.g., s3://bucket-name/model.tar.gz)"
-                            pattern: ^s3:\/\/.+\.tar\.gz$
-                            message:
-                              pattern: Must be a valid S3 URI ending in .tar.gz
-                        required:
-                          - model_data
-                      - properties:
-                          enabled:
-                            const: false
+                enabled:
+                  oneOf:
+                  - properties:
+                      enabled:
+                        const: true
+                      model_data:
+                        title: Model Data S3 URI
+                        type: string
+                        description: The S3 URI of the model data. (e.g., s3://bucket-name/model.tar.gz)
+                        pattern: "^s3:\\/\\/.+\\.tar\\.gz$"
+                        message:
+                          pattern: Must be a valid S3 URI ending in .tar.gz
+                    required:
+                    - model_data
+                  - properties:
+                      enabled:
+                        const: false
         instance_type:
           title: SageMaker Instance Type
           description: Instance type to use for the SageMaker endpoint
           type: string
           oneOf:
-            - title: ml.t3.medium - Comparable to Basic CPUs
-              const: ml.t3.medium
-            - title: ml.t3.large - Comparable to Basic CPUs with more Memory
-              const: ml.t3.large
-            - title: ml.m5.large - General Purpose (2 vCPU, 8 GiB Memory)
-              const: ml.m5.large
-            - title: ml.m5.xlarge - General Purpose (4 vCPU, 16 GiB Memory)
-              const: ml.m5.xlarge
-            - title: ml.c5.2xlarge - High CPU (8 vCPU, 16 GiB Memory)
-              const: ml.c5.2xlarge
-            - title: ml.c5.4xlarge - High CPU (16 vCPU, 32 GiB Memory)
-              const: ml.c5.4xlarge
-            - title: ml.p2.xlarge - GPU Compute (1 K80 GPU)
-              const: ml.p2.xlarge
-            - title: ml.p2.8xlarge - High-Performance GPUs (8 K80 GPUs)
-              const: ml.p2.8xlarge
-            - title: ml.p3.2xlarge - Advanced GPU Compute (1 V100 GPU)
-              const: ml.p3.2xlarge
-            - title: ml.p3.8xlarge - High-Performance GPUs (4 V100 GPUs)
-              const: ml.p3.8xlarge
-            - title: ml.g4dn.xlarge - GPU Optimized (1 T4 GPU)
-              const: ml.g4dn.xlarge
-            - title: ml.g4dn.12xlarge - GPU Optimized for Graphics (4 T4 GPUs)
-              const: ml.g4dn.12xlarge
-            - title: ml.inf1.xlarge - Inferentia Chips for High Performance Inference
-              const: ml.inf1.xlarge
-            - title: ml.inf1.6xlarge - High Performance Inferentia Chips
-              const: ml.inf1.6xlarge
-            - title: ml.c5.9xlarge - Very High CPU (36 vCPU, 72 GiB Memory)
-              const: ml.c5.9xlarge
-            - title: ml.g5.large - NVIDIA A10G GPU Optimized (1 vCPU, 8 GiB Memory)
-              const: ml.g5.large
-            - title: ml.g5.xlarge - NVIDIA A10G GPU Optimized (4 vCPU, 16 GiB Memory)
-              const: ml.g5.xlarge
-            - title: ml.g5.2xlarge - NVIDIA A10G GPU Optimized (8 vCPU, 32 GiB Memory)
-              const: ml.g5.2xlarge
-            - title: ml.g5.4xlarge - NVIDIA A10G GPU Optimized (16 vCPU, 64 GiB Memory)
-              const: ml.g5.4xlarge
-            - title: ml.g5.8xlarge - NVIDIA A10G GPU Optimized (32 vCPU, 128 GiB Memory)
-              const: ml.g5.8xlarge
-            - title: ml.g5.12xlarge - High Performance NVIDIA A10G GPUs (48 vCPU, 192 GiB Memory)
-              const: ml.g5.12xlarge
-            - title: ml.g5.16xlarge - High Performance NVIDIA A10G GPUs (64 vCPU, 256 GiB Memory)
-              const: ml.g5.16xlarge
-            - title: ml.g5.24xlarge - High Performance NVIDIA A10G GPUs (96 vCPU, 384 GiB Memory)
-              const: ml.g5.24xlarge
+          - title: ml.t3.medium - Comparable to Basic CPUs
+            const: ml.t3.medium
+          - title: ml.t3.large - Comparable to Basic CPUs with more Memory
+            const: ml.t3.large
+          - title: ml.m5.large - General Purpose (2 vCPU, 8 GiB Memory)
+            const: ml.m5.large
+          - title: ml.m5.xlarge - General Purpose (4 vCPU, 16 GiB Memory)
+            const: ml.m5.xlarge
+          - title: ml.c5.2xlarge - High CPU (8 vCPU, 16 GiB Memory)
+            const: ml.c5.2xlarge
+          - title: ml.c5.4xlarge - High CPU (16 vCPU, 32 GiB Memory)
+            const: ml.c5.4xlarge
+          - title: ml.p2.xlarge - GPU Compute (1 K80 GPU)
+            const: ml.p2.xlarge
+          - title: ml.p2.8xlarge - High-Performance GPUs (8 K80 GPUs)
+            const: ml.p2.8xlarge
+          - title: ml.p3.2xlarge - Advanced GPU Compute (1 V100 GPU)
+            const: ml.p3.2xlarge
+          - title: ml.p3.8xlarge - High-Performance GPUs (4 V100 GPUs)
+            const: ml.p3.8xlarge
+          - title: ml.g4dn.xlarge - GPU Optimized (1 T4 GPU)
+            const: ml.g4dn.xlarge
+          - title: ml.g4dn.12xlarge - GPU Optimized for Graphics (4 T4 GPUs)
+            const: ml.g4dn.12xlarge
+          - title: ml.inf1.xlarge - Inferentia Chips for High Performance Inference
+            const: ml.inf1.xlarge
+          - title: ml.inf1.6xlarge - High Performance Inferentia Chips
+            const: ml.inf1.6xlarge
+          - title: ml.c5.9xlarge - Very High CPU (36 vCPU, 72 GiB Memory)
+            const: ml.c5.9xlarge
+          - title: ml.g5.large - NVIDIA A10G GPU Optimized (1 vCPU, 8 GiB Memory)
+            const: ml.g5.large
+          - title: ml.g5.xlarge - NVIDIA A10G GPU Optimized (4 vCPU, 16 GiB Memory)
+            const: ml.g5.xlarge
+          - title: ml.g5.2xlarge - NVIDIA A10G GPU Optimized (8 vCPU, 32 GiB Memory)
+            const: ml.g5.2xlarge
+          - title: ml.g5.4xlarge - NVIDIA A10G GPU Optimized (16 vCPU, 64 GiB Memory)
+            const: ml.g5.4xlarge
+          - title: ml.g5.8xlarge - NVIDIA A10G GPU Optimized (32 vCPU, 128 GiB Memory)
+            const: ml.g5.8xlarge
+          - title: ml.g5.12xlarge - High Performance NVIDIA A10G GPUs (48 vCPU, 192 GiB Memory)
+            const: ml.g5.12xlarge
+          - title: ml.g5.16xlarge - High Performance NVIDIA A10G GPUs (64 vCPU, 256 GiB Memory)
+            const: ml.g5.16xlarge
+          - title: ml.g5.24xlarge - High Performance NVIDIA A10G GPUs (96 vCPU, 384 GiB Memory)
+            const: ml.g5.24xlarge
         instance_count:
           title: Initial Instance Count
-          description: "Initial number of instances used for auto-scaling."
+          description: Initial number of instances used for auto-scaling.
           type: integer
           minimum: 1
     monitoring:
@@ -124,23 +123,26 @@ params:
         endpoint_log_retention:
           type: integer
           default: 7
-          enum: [7, 30, 365]
+          enum:
+          - 7
+          - 30
+          - 365
     environment_variables:
-        title: Environment Variables
-        type: array
-        items:
-          type: object
-          required:
-            - name
-            - value
-          properties:
-            name:
-              title: Variable Name
-              type: string
-            value:
-              title: Variable Value
-              type: string
-        description: "Optional: List of environment variables as key-value pairs."
+      title: Environment Variables
+      type: array
+      items:
+        type: object
+        required:
+        - name
+        - value
+        properties:
+          name:
+            title: Variable Name
+            type: string
+          value:
+            title: Variable Value
+            type: string
+      description: 'Optional: List of environment variables as key-value pairs.'
 connections:
   required:
   - aws_authentication
@@ -148,27 +150,31 @@ connections:
   - vpc
   properties:
     aws_authentication:
-      $ref: massdriver/aws-iam-role
+      "$ref": massdriver/aws-iam-role
     s3_model_bucket:
-      $ref: massdriver/aws-s3-bucket
+      "$ref": massdriver/aws-s3-bucket
     vpc:
-      $ref: massdriver/aws-vpc
-
+      "$ref": massdriver/aws-vpc
 artifacts:
   required:
-    - aws-sagemaker-endpoint
+  - aws-sagemaker-endpoint
   properties:
     aws-sagemaker-endpoint:
-      $ref: massdriver/aws-sagemaker-endpoint
-
+      "$ref": massdriver/aws-sagemaker-endpoint
 ui:
   ui:order:
-    - primary_container
-    - instance_type
-    - instance_count
-    - "*"
+  - primary_container
+  - instance_type
+  - instance_count
+  - "*"
   primary_container:
     ui:order:
-      - ecr_image
-      - model_data_config
-      - "*"
+    - ecr_image
+    - model_data_config
+    - "*"
+steps:
+- path: src
+  provisioner: opentofu
+  config:
+    checkov:
+      enable: true
