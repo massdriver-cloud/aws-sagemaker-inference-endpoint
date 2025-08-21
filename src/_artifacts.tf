@@ -1,7 +1,6 @@
 resource "massdriver_artifact" "aws-sagemaker-endpoint" {
-  field                = "aws-sagemaker-endpoint"
-  provider_resource_id = aws_sagemaker_endpoint.main.arn
-  name                 = "AWS SageMaker Endpoint: ${aws_sagemaker_endpoint.main.arn}"
+  field    = "aws-sagemaker-endpoint"
+  name     = "AWS SageMaker Endpoint: ${aws_sagemaker_endpoint.main.arn}"
   artifact = jsonencode(
     {
       data = {
